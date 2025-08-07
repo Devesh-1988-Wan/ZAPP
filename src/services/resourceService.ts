@@ -1,35 +1,44 @@
 import { supabase } from '@/lib/supabase';
-
-export interface Resource {
-  id: string;
-  project_id: string;
-  name: string;
-  type: string;
-  availability: number;
-}
+import { Resource } from '@/integrations/supabase/types';
 
 export class ResourceService {
   static async getResourcesForProject(projectId: string): Promise<Resource[]> {
-    // Temporarily disabled - table not in types
-    console.warn('Resource service temporarily disabled - table not in types');
-    return [];
+    const { data, error } = await supabase
+      .from('resources')
+      .select('*')
+      .eq('project_id', projectId)
+      .order('created_at');
+
+    if (error) {
+      console.error("Error fetching resources:", error);
+      throw error;
+    }
+    return data || [];
   }
 
-  static async createResource(resource: Omit<Resource, 'id'>): Promise<Resource> {
-    // Temporarily disabled
-    console.warn('Resource service temporarily disabled - table not in types');
-    throw new Error('Resource service temporarily disabled');
-  }
+  static async createResource(resource: Omit<Resource, 'id' | 'created_at' | 'updated_at'>): Promise<Resource> {
+    const { data, error } = await supabase
+      .from('resources')
+      .insert(resource)
+      .select()
+      .single();
 
-  static async updateResource(id: string, updates: Partial<Resource>): Promise<Resource> {
-    // Temporarily disabled
-    console.warn('Resource service temporarily disabled - table not in types');
-    throw new Error('Resource service temporarily disabled');
+    if (error) {
+      console.error("Error creating resource:", error);
+      throw error;
+    }
+    return data;
   }
 
   static async deleteResource(id: string): Promise<void> {
-    // Temporarily disabled
-    console.warn('Resource service temporarily disabled - table not in types');
-    throw new Error('Resource service temporarily disabled');
+    const { error } = await supabase
+      .from('resources')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error("Error deleting resource:", error);
+      throw error;
+    }
   }
 }
