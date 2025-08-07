@@ -10,6 +10,7 @@ import ProjectDetail from "./pages/ProjectDetail";
 import NotFound from "./pages/NotFound";
 import { AdminUserManagement } from "./pages/AdminUserManagement";
 import { Auth } from "./pages/Auth";
+import { ProfilePage } from "./pages/Profile"; // Import the new profile page
 
 const queryClient = new QueryClient();
 
@@ -46,7 +47,15 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* ADDED PROFILE ROUTE */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
