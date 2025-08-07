@@ -1,44 +1,60 @@
-// src/services/budgetService.ts
 import { supabase } from '@/lib/supabase';
-
-export interface Budget {
-  id: string;
-  project_id: string;
-  category: string;
-  amount: number;
-}
-
-export interface Expense {
-  id: string;
-  project_id: string;
-  budget_id: string;
-  description: string;
-  amount: number;
-  incurred_on: string;
-}
+import { Budget, Expense } from '@/integrations/supabase/types';
 
 export class BudgetService {
   static async getBudgetsForProject(projectId: string): Promise<Budget[]> {
-    // Temporarily return empty array - these tables need to be added to types
-    console.warn('Budget service temporarily disabled - tables not in types');
-    return [];
+    const { data, error } = await supabase
+      .from('budgets')
+      .select('*')
+      .eq('project_id', projectId)
+      .order('created_at');
+      
+    if (error) {
+        console.error("Error fetching budgets:", error);
+        throw error;
+    }
+    return data || [];
   }
 
-  static async createBudget(budget: Omit<Budget, 'id'>): Promise<Budget> {
-    // Temporarily disabled
-    console.warn('Budget service temporarily disabled - tables not in types');
-    throw new Error('Budget service temporarily disabled');
+  static async createBudget(budget: Omit<Budget, 'id' | 'created_at' | 'updated_at'>): Promise<Budget> {
+    const { data, error } = await supabase
+        .from('budgets')
+        .insert(budget)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Error creating budget:", error);
+        throw error;
+    }
+    return data;
   }
 
   static async getExpensesForProject(projectId: string): Promise<Expense[]> {
-    // Temporarily return empty array
-    console.warn('Budget service temporarily disabled - tables not in types');
-    return [];
+    const { data, error } = await supabase
+        .from('expenses')
+        .select('*')
+        .eq('project_id', projectId)
+        .order('incurred_on', { ascending: false });
+
+    if (error) {
+        console.error("Error fetching expenses:", error);
+        throw error;
+    }
+    return data || [];
   }
 
-  static async createExpense(expense: Omit<Expense, 'id'>): Promise<Expense> {
-    // Temporarily disabled
-    console.warn('Budget service temporarily disabled - tables not in types');
-    throw new Error('Budget service temporarily disabled');
+  static async createExpense(expense: Omit<Expense, 'id' | 'created_at' | 'updated_at'>): Promise<Expense> {
+    const { data, error } = await supabase
+        .from('expenses')
+        .insert(expense)
+        .select()
+        .single();
+    
+    if (error) {
+        console.error("Error creating expense:", error);
+        throw error;
+    }
+    return data;
   }
 }
