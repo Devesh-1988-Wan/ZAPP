@@ -44,6 +44,39 @@ export interface Task {
   docs_progress?: DocsProgressStatus;
 }
 
+// --- NEW INTERFACES ---
+export interface Budget {
+  id: string;
+  project_id: string;
+  category: string;
+  amount: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Expense {
+  id: string;
+  project_id: string;
+  budget_id: string;
+  description?: string;
+  amount: number;
+  incurred_on: string; // Stored as a date string e.g., "2024-08-07"
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Resource {
+  id: string;
+  project_id: string;
+  name: string;
+  type: 'human' | 'equipment' | 'material';
+  availability: number; // Stored as a percentage
+  created_at: string;
+  updated_at: string;
+}
+// --- END NEW INTERFACES ---
+
+
 export interface Project {
   id: string;
   name: string;
@@ -55,4 +88,8 @@ export interface Project {
   customFields?: CustomField[];
   team_members: string[];
   created_by: string;
+  // --- UPDATED FIELDS ---
+  budgets?: Budget[];
+  expenses?: Expense[];
+  resources?: Resource[];
 }
